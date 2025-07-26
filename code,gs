@@ -1,0 +1,65 @@
+function sendStudentResults() {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const data = sheet.getDataRange().getValues(); // Read all data from the sheet
+
+    // Define the column indexes based on your headers
+    const timestampIdx = 0; // Timestamp column index
+    const emailIdx = 3;     // Email column index
+    const mathsIdx = 4;     // MATHS MARKS column index
+    const scienceIdx = 5;   // SCIENCE MARKS column index
+    const socialIdx = 6;    // SOCIAL MARKS column index
+    const englishIdx = 7;   // ENGLISH MARKS column index
+    const kannadaIdx = 8;   // KANNADA MARKS column index
+    const hindiIdx = 9;     // HINDI MARKS column index
+
+    // Loop through each student row, skipping the header (row 0)
+    for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const studentEmail = row[emailIdx];
+        const studentName = row[2]; // Assuming Name is in column index 2
+
+        // Marks for each subject
+        const marks = [
+            { subject: "Maths", score: row[mathsIdx] },
+            { subject: "Science", score: row[scienceIdx] },
+            { subject: "Social", score: row[socialIdx] },
+            { subject: "English", score: row[englishIdx] },
+            { subject: "Kannada", score: row[kannadaIdx] },
+            { subject: "Hindi", score: row[hindiIdx] },
+        ];
+
+        // Calculate total, percentage, and pass/fail
+        const maxMarks = 100; // Each subject is out of 100 marks
+        const passMarks = 33; // Minimum passing marks per subject
+        let totalMarks = 0;
+        let hasFailed = false;
+
+        marks.forEach(mark => {
+            totalMarks += mark.score;
+            if (mark.score < passMarks) {
+                hasFailed = true;
+            }
+        });
+
+        const percentage = (totalMarks / (marks.length * maxMarks)) * 100;
+        const resultStatus = hasFailed ? "Failed" : "Passed";
+        const resultMessage = hasFailed
+            ? "Try harder next time! You can do it."
+            : "Congratulations! You were successful in clearing all subjects.";
+
+        // Email body
+        let emailBody = `Dear ${studentName},\n\nHere are your exam results:\n\n`;
+        marks.forEach(mark => {
+            emailBody += `${mark.subject}: ${mark.score}/${maxMarks}\n`;
+        });
+        emailBody += `\nTotal Marks: ${totalMarks}/${marks.length * maxMarks}\n`;
+        emailBody += `Percentage: ${percentage.toFixed(2)}%\n`;
+        emailBody += `Status: ${resultStatus}\n\n`;
+        emailBody += `${resultMessage}\n\nBest regards,\nSchool Administration`;
+
+        // Send email
+        GmailApp.sendEmail(studentEmail, "Your Exam Results", emailBody);
+    }
+
+    Logger.log("Emails sent to all students.");
+}
