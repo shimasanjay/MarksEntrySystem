@@ -1,0 +1,25 @@
+✅ Step-by-Step Guide:
+1. Create the Google Form
+Go to Google Forms
+
+Add fields: Name, Email, Maths Marks, Science, Social, English, Kannada, Hindi
+
+2. Connect to Google Sheet
+Click on Responses > Link to Sheets
+
+A new Google Sheet will be created to collect form submissions.
+
+3. Open Apps Script
+In the linked Sheet, click Extensions > Apps Script
+
+4. Paste the Code
+Paste the code.gs (which sends emails with marks and results)
+✅ Example code: click here to review the script
+
+5. Authorize the Script
+Save and run the function sendStudentResults()
+
+Accept permissions to allow Gmail and Sheets access
+
+6. Test the Form
+Fill out the form once and check if the email is received
